@@ -58,9 +58,9 @@
       var buildUrl = "Build";
       var loaderUrl = buildUrl + "/webTruth.loader.js";
       var config = {
-        dataUrl: buildUrl + "/webTruth.data.br",
-        frameworkUrl: buildUrl + "/webTruth.framework.js.br",
-        codeUrl: buildUrl + "/webTruth.wasm.br",
+        dataUrl: buildUrl + "/webTruth.data",
+        frameworkUrl: buildUrl + "/webTruth.framework.js",
+        codeUrl: buildUrl + "/webTruth.wasm",
         streamingAssetsUrl: "StreamingAssets",
         companyName: "WhyNotGames",
         productName: "Truth or Dare",
@@ -97,7 +97,7 @@
         canvas.style.height = "600px";
       }
 
-      canvas.style.background = "url('" + buildUrl + "/webTruth.jpg.br') center / cover";
+      canvas.style.background = "url('" + buildUrl + "/webTruth.jpg') center / cover";
       loadingBar.style.display = "block";
 
       var script = document.createElement("script");
