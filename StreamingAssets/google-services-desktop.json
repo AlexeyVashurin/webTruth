@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "121308811711",
+    "project_id": "truth-or-dare-c16cb",
+    "storage_bucket": "truth-or-dare-c16cb.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:121308811711:android:1e0e3e31d48abd4235510a",
+        "android_client_info": {
+          "package_name": "com.TruthorDareWhyNotGames"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBJzo0Wl7eMsvxmHDZYuPCrlLBhzLq7qHs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
