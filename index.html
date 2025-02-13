@@ -121,18 +121,12 @@
 <script>
   // Эта функция будет вызываться из Unity через ExternalCall или из вашего C#-кода
   function initiateNativePurchase() {
-    // Формируем объект с данными о покупке (отправьте нужные вам параметры)
-    var purchaseData = {
-      action: "purchaseStars",
-      productId: "stars_001",  // идентификатор продукта (звёзды)
-      amount: 100,             // количество звёзд
-      price: 0.99,             // цена в долларах (пример)
-      currency: "USD"
-    };
-
-    // Отправляем данные вашему боту через Telegram WebApp API.
-    // Telegram.WebApp.sendData автоматически сериализует строку и передаёт её боту.
-    Telegram.WebApp.sendData(JSON.stringify(purchaseData));
+    if (typeof Telegram !== "undefined" && Telegram.WebApp) {
+      // Отправляем строку "/buy" боту
+      Telegram.WebApp.sendData("/buy");
+    } else {
+      console.log("Telegram WebApp API не доступен.");
+    }
   }
 </script>
 </body>
