@@ -121,12 +121,7 @@
 <script>
   // Эта функция будет вызываться из Unity через ExternalCall или из вашего C#-кода
   function triggerBuy() {
-    if (typeof Telegram !== "undefined" && Telegram.WebApp) {
-      // Отправляем строку "/buy" боту
       Telegram.WebApp.sendData("/buy");
-    } else {
-      console.log("Telegram WebApp API не доступен.");
-    }
   }
 </script>
 </body>
