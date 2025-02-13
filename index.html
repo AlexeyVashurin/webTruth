@@ -120,7 +120,7 @@
 <!-- Пользовательский JavaScript для платежей -->
 <script>
   // Эта функция будет вызываться из Unity через ExternalCall или из вашего C#-кода
-  function initiateNativePurchase() {
+  function triggerBuy() {
     if (typeof Telegram !== "undefined" && Telegram.WebApp) {
       // Отправляем строку "/buy" боту
       Telegram.WebApp.sendData("/buy");
