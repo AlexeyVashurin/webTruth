@@ -8,14 +8,14 @@
 <h1>Telegram TWA SDK Test</h1>
 <button id="triggerBuy">Trigger Buy</button>
 
-<!-- Подключаем ES-модуль через Skypack -->
+<!-- Используем type="module" для поддержки ES-модулей -->
 <script type="module">
-    // Импортируем SDK из Skypack CDN
-    import { WebApp } from "https://cdn.skypack.dev/@twa-dev/sdk";
+    // Импортируем SDK как значение по умолчанию
+    import TWA from "https://cdn.skypack.dev/@twa-dev/sdk";
 
     // Инициализируем SDK
-    WebApp.ready();
-    WebApp.showAlert("SDK loaded and ready!");
+    TWA.ready();
+    TWA.showAlert("SDK loaded and ready!");
 
     // Обработчик клика для запуска покупки
     document.getElementById("triggerBuy").addEventListener("click", async () => {
@@ -37,22 +37,22 @@
             console.log("Invoice link received:", invoiceLink);
 
             // Проверяем наличие метода openInvoice и открываем окно оплаты
-            if (typeof WebApp.openInvoice === "function") {
-                WebApp.openInvoice(invoiceLink, (status) => {
+            if (typeof TWA.openInvoice === "function") {
+                TWA.openInvoice(invoiceLink, (status) => {
                     console.log("Payment status:", status);
                     if (status === "paid") {
-                        WebApp.showAlert("Payment successful!");
+                        TWA.showAlert("Payment successful!");
                     } else {
-                        WebApp.showAlert("Payment not completed. Status: " + status);
+                        TWA.showAlert("Payment not completed. Status: " + status);
                     }
                 });
             } else {
                 console.error("openInvoice method is not available");
-                WebApp.showAlert("Your Telegram client does not support openInvoice.");
+                TWA.showAlert("Your Telegram client does not support openInvoice.");
             }
         } catch (error) {
             console.error("Error during triggerBuy:", error);
-            WebApp.showAlert("An error occurred: " + error.message);
+            TWA.showAlert("An error occurred: " + error.message);
         }
     });
 </script>
