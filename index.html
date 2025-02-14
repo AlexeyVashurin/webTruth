@@ -92,8 +92,7 @@
 <script>
     // Эта функция будет вызываться из Unity через ExternalCall или из вашего C#-кода
     function triggerBuy() {
-        console.log("нажал");
-        Telegram.WebApp.sendData("/buy");
+        Application.OpenURL("https://t.me/TruthOrDareWheel_Bot?start=pay");
     }
 </script>
 </body>
