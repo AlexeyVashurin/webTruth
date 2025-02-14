@@ -90,20 +90,27 @@
 
 <!-- Пользовательский JavaScript для платежей -->
 <script>
-    // Если приложение запускается в Telegram Web App, то вызываем Telegram.WebApp.ready()
-    Telegram.WebApp.ready();
+    // Дожидаемся полной загрузки документа
+    document.addEventListener("DOMContentLoaded", () => {
+        // Если Telegram WebApp доступен, вызываем ready()
+        if (window.Telegram && window.Telegram.WebApp) {
+            window.Telegram.WebApp.ready();
+        } else {
+            console.warn("Telegram WebApp SDK не загружен.");
+        }
+    });
 
-    // Новая функция triggerBuy, вызываемая из Unity через ExternalCall или из вашего C# кода
+    // Функция для вызова инвойса. Сделана глобальной для вызова из Unity.
     async function triggerBuy() {
-        console.log("Кликнул");
+        console.log("Кликнул triggerBuy");
         try {
-            // Замените URL на публичный URL вашего сервера (например, полученный через ngrok)
+            // Запрос к серверу для генерации инвойса. Замените URL на публичный URL вашего сервера.
             const response = await fetch('https://sucisique.beget.app/generate-invoice', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({}) // Передайте необходимые данные, если нужно
+                body: JSON.stringify({})
             });
 
             if (!response.ok) {
@@ -114,19 +121,27 @@
             const invoiceLink = data.invoiceLink;
             console.log("Получена ссылка инвойса:", invoiceLink);
 
-            // Вызываем openInvoice с полученной ссылкой и передаём callback для обработки статуса оплаты
-            window.Telegram.WebApp.openInvoice (invoiceLink, ( status ) => {
-                console.log("Статус оплаты:", status);
-                if (status === "paid") {
-                    alert("Оплата прошла успешно!");
-                } else {
-                    alert("Оплата не завершена, статус: " + status);
-                }
-            });
+            // Проверяем, что Telegram WebApp SDK загружен
+            if (window.Telegram && window.Telegram.WebApp) {
+                // Вызываем openInvoice с полученной ссылкой
+                window.Telegram.WebApp.openInvoice(invoiceLink, (status) => {
+                    console.log("Статус оплаты:", status);
+                    if (status === "paid") {
+                        alert("Оплата прошла успешно!");
+                    } else {
+                        alert("Оплата не завершена, статус: " + status);
+                    }
+                });
+            } else {
+                console.error("Telegram WebApp SDK не доступен");
+            }
         } catch (error) {
             console.error("Ошибка в triggerBuy:", error);
         }
     }
+
+    // Делаем triggerBuy глобальной, чтобы её можно было вызвать из Unity или другого кода
+    window.triggerBuy = triggerBuy;
 </script>
 </body>
 </html>
