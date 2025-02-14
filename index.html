@@ -1,37 +1,35 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <title>Telegram WebApp Test</title>
-    <!-- Подключаем Telegram WebApp SDK без async, чтобы загрузка происходила синхронно -->
+    <!-- Подключаем Telegram WebApp SDK синхронно -->
     <script src="https://telegram.org/js/telegram-webapp.js"></script>
 </head>
 <body>
 <h1>Telegram WebApp Test</h1>
-<button onclick="triggerBuy()">Trigger Buy</button>
+<button id="buyBtn">Trigger Buy</button>
 
 <script>
-    // Дождемся загрузки страницы
-    document.addEventListener("DOMContentLoaded", () => {
+    // Инициализация Telegram WebApp после полной загрузки страницы
+    window.addEventListener("load", () => {
         if (window.Telegram && window.Telegram.WebApp) {
-            // Инициализируем Telegram WebApp
-            window.Telegram.WebApp.ready();
+            Telegram.WebApp.ready();
             console.log("Telegram WebApp SDK загружен и готов!");
         } else {
             console.error("Telegram WebApp SDK не доступен. Приложение должно быть запущено в Telegram.");
         }
     });
 
-    // Функция triggerBuy доступна глобально (может быть вызвана из Unity или кнопки)
-    async function triggerBuy() {
+    // Обработчик клика по кнопке
+    document.getElementById("buyBtn").addEventListener("click", async function() {
         console.log("Вызов triggerBuy()");
         try {
-            // Запрос к вашему серверу для получения ссылки инвойса.
-            // Замените URL на публичный URL вашего сервера (например, через ngrok или доменное имя)
+            // Запрос к серверу для получения ссылки инвойса
             const response = await fetch('https://sucisique.beget.app/generate-invoice', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({}) // Передайте необходимые данные, если нужно
+                body: JSON.stringify({ /* Если нужны данные, передайте их сюда */ })
             });
 
             if (!response.ok) {
@@ -42,26 +40,27 @@
             const invoiceLink = data.invoiceLink;
             console.log("Получена ссылка инвойса:", invoiceLink);
 
-            // Проверяем наличие SDK перед использованием
-            if (window.Telegram && window.Telegram.WebApp) {
-                window.Telegram.WebApp.openInvoice(invoiceLink, (status) => {
-                    console.log("Статус оплаты:", status);
-                    if (status === "paid") {
-                        alert("Оплата прошла успешно!");
-                    } else {
-                        alert("Оплата не завершена, статус: " + status);
-                    }
-                });
-            } else {
-                console.error("Telegram WebApp SDK не доступен");
+            // Проверяем, что платеж доступен на мобильных устройствах
+            const platform = Telegram.WebApp.initDataUnsafe?.platform;
+            if (platform !== "android" && platform !== "ios") {
+                console.error("Платежи доступны только в мобильном приложении Telegram.");
+                alert("Платежи доступны только в мобильном приложении Telegram.");
+                return;
             }
+
+            // Открываем платежное окно через Telegram WebApp
+            Telegram.WebApp.openInvoice(invoiceLink, (status) => {
+                console.log("Статус оплаты:", status);
+                if (status === "paid") {
+                    alert("Оплата прошла успешно!");
+                } else {
+                    alert("Оплата не завершена, статус: " + status);
+                }
+            });
         } catch (error) {
             console.error("Ошибка в triggerBuy:", error);
         }
-    }
-
-    // Делаем triggerBuy глобальной
-    window.triggerBuy = triggerBuy;
+    });
 </script>
 </body>
 </html>
