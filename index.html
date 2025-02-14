@@ -97,22 +97,34 @@
     async function triggerBuy() {
         console.log("Кликнул");
         try {
-            const invoiceLink = 'http://localhost:3000/generate-invoice';
+            // Замените URL на публичный URL вашего сервера (например, полученный через ngrok)
+            const response = await fetch('https://sucisique.beget.app/generate-invoice', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({}) // Передайте необходимые данные, если нужно
+            });
 
-            // Открываем окно оплаты внутри Telegram Web App
-            Telegram.WebApp.openInvoice(invoiceLink, (status) => {
+            if (!response.ok) {
+                throw new Error("Ошибка получения ссылки инвойса");
+            }
+
+            const data = await response.json();
+            const invoiceLink = data.invoiceLink;
+            console.log("Получена ссылка инвойса:", invoiceLink);
+
+            // Вызываем openInvoice с полученной ссылкой и передаём callback для обработки статуса оплаты
+            WebApp.openInvoice (invoiceLink, ( status ) => {
                 console.log("Статус оплаты:", status);
                 if (status === "paid") {
-                    // Обработка успешной оплаты
-                    alert("Оплата успешно прошла!");
-                    // Здесь можно обновить баланс пользователя, изменить план и т.д.
+                    alert("Оплата прошла успешно!");
                 } else {
-                    // Обработка других статусов, если необходимо
-                    console.warn("Оплата не завершена, статус: ", status);
+                    alert("Оплата не завершена, статус: " + status);
                 }
             });
         } catch (error) {
-            console.error("Ошибка при открытии инвойса:", error);
+            console.error("Ошибка в triggerBuy:", error);
         }
     }
 </script>
