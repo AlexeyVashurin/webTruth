@@ -115,7 +115,7 @@
             console.log("Получена ссылка инвойса:", invoiceLink);
 
             // Вызываем openInvoice с полученной ссылкой и передаём callback для обработки статуса оплаты
-            WebApp.openInvoice (invoiceLink, ( status ) => {
+            window.Telegram.WebApp.openInvoice (invoiceLink, ( status ) => {
                 console.log("Статус оплаты:", status);
                 if (status === "paid") {
                     alert("Оплата прошла успешно!");
