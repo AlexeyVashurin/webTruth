@@ -8,12 +8,12 @@
 <h1>Telegram TWA SDK Test</h1>
 <button id="triggerBuy">Trigger Buy</button>
 
-<!-- Используем type="module" для поддержки ES-модулей -->
+<!-- Подключаем ES-модуль через Skypack -->
 <script type="module">
-    // Импортируем SDK из unpkg CDN
-    import { WebApp } from "https://unpkg.com/@twa-dev/sdk?module";
+    // Импортируем SDK из Skypack CDN
+    import { WebApp } from "https://cdn.skypack.dev/@twa-dev/sdk";
 
-    // Инициализация SDK
+    // Инициализируем SDK
     WebApp.ready();
     WebApp.showAlert("SDK loaded and ready!");
 
@@ -21,7 +21,7 @@
     document.getElementById("triggerBuy").addEventListener("click", async () => {
         console.log("Trigger Buy clicked");
         try {
-            // Запрос на ваш сервер для получения ссылки инвойса
+            // Запрос к серверу для получения ссылки инвойса
             const response = await fetch('https://sucisique.beget.app/generate-invoice', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -36,7 +36,7 @@
             const invoiceLink = data.invoiceLink;
             console.log("Invoice link received:", invoiceLink);
 
-            // Проверяем наличие метода openInvoice
+            // Проверяем наличие метода openInvoice и открываем окно оплаты
             if (typeof WebApp.openInvoice === "function") {
                 WebApp.openInvoice(invoiceLink, (status) => {
                     console.log("Payment status:", status);
