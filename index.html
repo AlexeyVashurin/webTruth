@@ -13,15 +13,28 @@
     // Импортируем SDK как значение по умолчанию
     import TWA from "https://cdn.skypack.dev/@twa-dev/sdk";
 
-    // Инициализируем SDK
-    TWA.ready();
-    TWA.showAlert("SDK loaded and ready!");
+    // Функция-обертка для безопасного показа сообщений.
+    // Если метод TWA.showAlert вызовет ошибку (из-за вызова showPopup),
+    // мы переключаемся на нативный alert.
+    function safeShowAlert(message) {
+        try {
+            TWA.showAlert(message);
+        } catch (error) {
+            console.warn("TWA.showAlert не поддерживается, используем native alert.", error);
+            alert(message);
+        }
+    }
 
-    // Обработчик клика для запуска покупки
+    // Инициализация SDK
+    TWA.ready();
+    safeShowAlert("SDK loaded and ready!");
+
+    // Обработчик клика для запуска процесса покупки
     document.getElementById("triggerBuy").addEventListener("click", async () => {
         console.log("Trigger Buy clicked");
         try {
-            // Запрос к серверу для получения ссылки инвойса
+            // Запрос к серверу для получения ссылки инвойса.
+            // Замените URL и передаваемые данные по необходимости.
             const response = await fetch('https://sucisique.beget.app/generate-invoice', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -36,23 +49,23 @@
             const invoiceLink = data.invoiceLink;
             console.log("Invoice link received:", invoiceLink);
 
-            // Проверяем наличие метода openInvoice и открываем окно оплаты
+            // Если метод openInvoice доступен, вызываем его
             if (typeof TWA.openInvoice === "function") {
                 TWA.openInvoice(invoiceLink, (status) => {
                     console.log("Payment status:", status);
                     if (status === "paid") {
-                        TWA.showAlert("Payment successful!");
+                        safeShowAlert("Payment successful!");
                     } else {
-                        TWA.showAlert("Payment not completed. Status: " + status);
+                        safeShowAlert("Payment not completed. Status: " + status);
                     }
                 });
             } else {
                 console.error("openInvoice method is not available");
-                TWA.showAlert("Your Telegram client does not support openInvoice.");
+                safeShowAlert("Your Telegram client does not support openInvoice.");
             }
         } catch (error) {
             console.error("Error during triggerBuy:", error);
-            TWA.showAlert("An error occurred: " + error.message);
+            safeShowAlert("An error occurred: " + error.message);
         }
     });
 </script>
