@@ -96,6 +96,7 @@
     // Новая функция triggerBuy, вызываемая из Unity через ExternalCall или из вашего C# кода
     async function triggerBuy() {
         try {
+            console.log("Кликнул");
             // Замените URL ниже на актуальный адрес вашего сервера, обеспечивающего endpoint generate-invoice
             const response = await fetch('http://localhost:3000/generate-invoice', {
                 method: 'POST', // Если сервер настроен на GET, измените на 'GET'
