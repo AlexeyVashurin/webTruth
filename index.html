@@ -124,7 +124,7 @@
             const invoiceLink = data.invoiceLink;
             console.log("Получена ссылка инвойса:", invoiceLink);
 
-            if (window.Telegram && window.Telegram.WebApp) {
+            if (window.Telegram.WebApp) {
                 window.Telegram.WebApp.openInvoice(invoiceLink, (status) => {
                     console.log("Статус оплаты:", status);
                     if (status === "paid") {
@@ -135,6 +135,7 @@
                 });
             } else {
                 console.error("Telegram WebApp SDK не доступен");
+                // Здесь можно вызвать какой-то fallback или уведомить, что функция доступна только в Telegram.
             }
         } catch (error) {
             console.error("Ошибка в triggerBuy:", error);
