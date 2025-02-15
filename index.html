@@ -84,6 +84,8 @@
             progressBarFull.style.width = 100 * progress + "%";
         }).then((unityInstance) => {
             loadingBar.style.display = "none";
+            window.UnityInstance = unityInstance; // делаем её глобальной
+            console.log("UnityInstance создан:", window.UnityInstance);
         }).catch((message) => {
             alert(message);
         });
