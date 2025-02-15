@@ -139,11 +139,6 @@
                         safeShowAlert("Payment successful!");
                         // Вызываем метод в Unity для открытия покупки
                         UnityInstance.SendMessage("PaymentManager", "OnPaymentSuccess", "Покупка успешно завершена");
-                        
-                        if (typeof UnityInstance !== "undefined") {
-                        } else {
-                            console.warn("UnityInstance is not defined.");
-                        }
                     } else {
                         safeShowAlert("Payment not completed. Status: " + status);
                     }
