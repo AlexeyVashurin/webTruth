@@ -153,7 +153,7 @@
         }
     }
 
-    async function restore() {
+    async function restorePur() {
         console.log("Restore purchase");
         try {
             // Предположим, что идентификатор пользователя получен из Telegram WebApp:
@@ -189,6 +189,7 @@
 
     // Делаем triggerBuy глобальной для вызова из Unity
     window.triggerBuy = triggerBuy;
+    window.restorePurchase = restorePurchase();
 </script>
 </body>
 </html>
