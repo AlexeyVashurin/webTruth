@@ -181,39 +181,32 @@
         }
     }
 
-    function showKeyboard() {
-        // Если TWA SDK предоставляет метод showKeyboard, используем его
-        if (TWA && typeof TWA.showKeyboard === "function") {
-            console.log("Используем TWA.showKeyboard");
-            TWA.showKeyboard();
-        } else {
-            // Если метода нет, выполняем fallback, создавая видимый input
-            console.log("TWA.showKeyboard недоступен, выполняем fallback");
-            let input = document.getElementById("keyboardInput");
-            if (!input) {
-                input = document.createElement("input");
-                input.type = "text";
-                input.id = "keyboardInput";
-                // Для лучшей поддержки на мобильных устройствах делаем элемент видимым
-                input.style.position = "fixed";
-                input.style.top = "10%";
-                input.style.left = "5%";
-                input.style.width = "90%";
-                input.style.height = "40px";
-                input.style.fontSize = "18px";
-                input.style.border = "1px solid #ccc";
-                input.style.padding = "5px";
-                input.style.zIndex = "10000";
-                document.body.appendChild(input);
-            }
-            input.focus();
+    function openKeyboard() {
+        // Пытаемся найти уже созданный input
+        let input = document.getElementById("keyboardInput");
+        if (!input) {
+            // Если его нет, создаем новый
+            input = document.createElement("input");
+            input.type = "text";
+            input.id = "keyboardInput";
+            // Настраиваем стили так, чтобы input был невидим, но «на экране»
+            input.style.position = "fixed";
+            input.style.top = "0px";
+            input.style.left = "0px";
+            input.style.width = "1px";
+            input.style.height = "1px";
+            input.style.opacity = "0"; // полностью прозрачное
+            input.style.pointerEvents = "none"; // чтобы не мешал взаимодействию с другими элементами
+            document.body.appendChild(input);
         }
+        // Устанавливаем фокус, что должно вызвать появление клавиатуры
+        input.focus();
     }
 
     // Делать функции глобальными для вызова из Unity или интерфейса
     window.triggerBuy = triggerBuy;
     window.restorePurchase = restorePurchase;
-    window.showKeyboard = showKeyboard;
+    window.openKeyboard = openKeyboard;
 </script>
 </body>
 </html>
