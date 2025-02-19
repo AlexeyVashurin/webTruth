@@ -110,7 +110,7 @@
 
     // Инициализация SDK
     TWA.ready();
-    safeShowAlert("SDK loaded and ready!");
+    // safeShowAlert("SDK loaded and ready!");
 
     // Функция для запуска процесса покупки
     async function triggerBuy() {
@@ -149,6 +149,40 @@
             }
         } catch (error) {
             console.error("Error during triggerBuy:", error);
+            safeShowAlert("An error occurred: " + error.message);
+        }
+    }
+
+    async function restore() {
+        console.log("Restore purchase");
+        try {
+            // Предположим, что идентификатор пользователя получен из Telegram WebApp:
+            const userId = Telegram.WebApp.initDataUnsafe.user.id;
+            // Формируем URL с параметром userId (отредактируйте URL согласно вашему серверу)
+            const url = `https://sucisique.beget.app/restore?userId=${encodeURIComponent(userId)}`;
+
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: { 'Content-Type': 'application/json' }
+            });
+
+            if (!response.ok) {
+                throw new Error("Failed to restore purchase");
+            }
+
+            const data = await response.json();
+            console.log("Restore result:", data);
+            safeShowAlert(data.message);
+            if (data.success) {
+                // Если покупка восстановлена, вызываем метод в Unity для открытия доступа
+                if (typeof UnityInstance !== "undefined") {
+                    UnityInstance.SendMessage("PaymentManager", "OnPurchaseRestored", "Покупка восстановлена");
+                } else {
+                    console.warn("UnityInstance is not defined.");
+                }
+            }
+        } catch (error) {
+            console.error("Error during restore purchase:", error);
             safeShowAlert("An error occurred: " + error.message);
         }
     }
