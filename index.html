@@ -32,6 +32,7 @@
         function updateBannerVisibility() {
             warningBanner.style.display = warningBanner.children.length ? 'block' : 'none';
         }
+
         var div = document.createElement('div');
         div.innerHTML = msg;
         warningBanner.appendChild(div);
@@ -108,13 +109,14 @@
 
     // Инициализация SDK
     TWA.ready();
+
     // Функция для запуска процесса покупки
     async function triggerBuy() {
         console.log("Вызов triggerBuy()");
         try {
             const response = await fetch('https://sucisique.beget.app/generate-invoice', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({})
             });
             if (!response.ok) {
@@ -157,7 +159,7 @@
             const url = `https://sucisique.beget.app/restore?userId=${encodeURIComponent(userId)}`;
             const response = await fetch(url, {
                 method: 'GET',
-                headers: { 'Content-Type': 'application/json' }
+                headers: {'Content-Type': 'application/json'}
             });
             if (!response.ok) {
                 throw new Error("Failed to restore purchase");
@@ -180,24 +182,29 @@
     }
 
     function showKeyboard() {
-        let input = document.getElementById("keyboardInput");
-        if (!input) {
-            input = document.createElement("input");
-            input.type = "text";
-            input.id = "keyboardInput";
-            // Сделаем элемент видимым, но не навязчивым
-            input.style.position = "absolute";
-            input.style.opacity = "0.01"; // почти прозрачный, но не 0
-            input.style.width = "30px";
-            input.style.height = "30px";
-            input.style.fontSize = "16px";
-            input.style.border = "none";
-            input.style.top = "10px";
-            input.style.left = "10px";
-            document.body.appendChild(input);
+        // Если TWA SDK предоставляет метод showKeyboard, используем его
+        if (TWA && typeof TWA.showKeyboard === 'function') {
+            TWA.showKeyboard();
+        } else {
+            // Fallback: создаем (или находим) скрытый input и устанавливаем на него фокус
+            let input = document.getElementById("keyboardInput");
+            if (!input) {
+                input = document.createElement("input");
+                input.type = "text";
+                input.id = "keyboardInput";
+                // Для iOS и Android делаем элемент хотя бы минимально видимым
+                input.style.position = "absolute";
+                input.style.opacity = "0.01"; // почти прозрачный, но не 0
+                input.style.width = "30px";
+                input.style.height = "30px";
+                input.style.fontSize = "16px";
+                input.style.border = "none";
+                input.style.top = "10px";
+                input.style.left = "10px";
+                document.body.appendChild(input);
+            }
+            input.focus();
         }
-        input.click();  // эмулируем нажатие
-        input.focus();
     }
 
     // Делать функции глобальными для вызова из Unity или интерфейса
