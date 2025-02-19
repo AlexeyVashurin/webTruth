@@ -185,37 +185,18 @@
             input = document.createElement("input");
             input.type = "text";
             input.id = "keyboardInput";
-            // Определяем user agent
-            const ua = navigator.userAgent || navigator.vendor || window.opera;
-            const isIOS = /iPad|iPhone|iPod/.test(ua) && !window.MSStream;
-            // На iOS делаем input немного больше, чтобы браузер его "увидел"
-            if (isIOS) {
-                input.style.position = "absolute";
-                input.style.opacity = 1; // полностью видимый, но можно сделать прозрачным через rgba(0,0,0,0)
-                input.style.width = "50px";  // небольшое поле
-                input.style.height = "30px"; // небольшое поле
-                input.style.fontSize = "16px"; // чтобы клавиатура точно открывалась
-                input.style.border = "1px solid transparent";
-            } else {
-                // На Android можно сделать минимальное поле, если не критично
-                input.style.position = "absolute";
-                input.style.opacity = 0.01;  // почти невидимое, но не 0
-                input.style.width = "1px";
-                input.style.height = "1px";
-                input.style.border = "none";
-            }
-            // Общее оформление
-            input.style.outline = "none";
-            input.style.padding = "0";
-            input.style.margin = "0";
-            // Помещаем элемент в верхнюю часть документа, чтобы он точно был на экране
+            // Сделаем элемент видимым, но не навязчивым
+            input.style.position = "absolute";
+            input.style.opacity = "0.01"; // почти прозрачный, но не 0
+            input.style.width = "30px";
+            input.style.height = "30px";
+            input.style.fontSize = "16px";
+            input.style.border = "none";
             input.style.top = "10px";
             input.style.left = "10px";
             document.body.appendChild(input);
         }
-        // Удаляем, если установлен readonly (на всякий случай)
-        input.readOnly = false;
-        // Прямой вызов фокуса в рамках пользовательского события
+        input.click();  // эмулируем нажатие
         input.focus();
     }
 
