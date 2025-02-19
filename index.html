@@ -168,6 +168,7 @@
                 // Вместо показа всплывающего окна отправляем данные через TWA.sendData,
                 // чтобы бот мог отправить сообщение в чат
                 TWA.sendData("Покупка восстановлена");
+                UnityInstance.SendMessage("PaymentManager", "OnPurchaseRestored", "Покупка восстановлена");
             } else {
                 // safeShowAlert("Покупка не найдена.");
                 console.log("Покупка не найдена");
