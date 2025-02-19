@@ -181,32 +181,9 @@
         }
     }
 
-    function openKeyboard() {
-        // Пытаемся найти уже созданный input
-        let input = document.getElementById("keyboardInput");
-        if (!input) {
-            // Если его нет, создаем новый
-            input = document.createElement("input");
-            input.type = "text";
-            input.id = "keyboardInput";
-            // Настраиваем стили так, чтобы input был невидим, но «на экране»
-            input.style.position = "fixed";
-            input.style.top = "0px";
-            input.style.left = "0px";
-            input.style.width = "1px";
-            input.style.height = "1px";
-            input.style.opacity = "0"; // полностью прозрачное
-            input.style.pointerEvents = "none"; // чтобы не мешал взаимодействию с другими элементами
-            document.body.appendChild(input);
-        }
-        // Устанавливаем фокус, что должно вызвать появление клавиатуры
-        input.focus();
-    }
-
     // Делать функции глобальными для вызова из Unity или интерфейса
     window.triggerBuy = triggerBuy;
     window.restorePurchase = restorePurchase;
-    window.openKeyboard = openKeyboard;
 </script>
 </body>
 </html>
