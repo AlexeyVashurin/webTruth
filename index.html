@@ -180,11 +180,20 @@
     }
 
     function showKeyboard() {
-        if (Telegram && Telegram.WebApp && typeof Telegram.WebApp.showKeyboard === "function") {
-            Telegram.WebApp.showKeyboard();
-        } else {
-            console.warn("Keyboard API not available.");
+        // Попробуем найти скрытый input, если его нет, создадим
+        var input = document.getElementById("keyboardInput");
+        if (!input) {
+            input = document.createElement("input");
+            input.type = "text";
+            input.id = "keyboardInput";
+            input.style.position = "absolute";
+            input.style.opacity = 0;
+            input.style.height = "0px";
+            input.style.width = "0px";
+            document.body.appendChild(input);
         }
+        // Фокусировка должна происходить в ответ на явное действие пользователя
+        input.focus();
     }
 
     // Делать функции глобальными для вызова из Unity или интерфейса
