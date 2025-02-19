@@ -172,11 +172,11 @@
 
             const data = await response.json();
             console.log("Restore result:", data);
-            safeShowAlert(data.message);
             if (data.success) {
                 // Если покупка восстановлена, вызываем метод в Unity для открытия доступа
                 if (typeof UnityInstance !== "undefined") {
                     UnityInstance.SendMessage("PaymentManager", "OnPurchaseRestored", "Покупка восстановлена");
+                    safeShowAlert(data.message);
                 } else {
                     console.warn("UnityInstance is not defined.");
                 }
