@@ -183,24 +183,27 @@
 
     function showKeyboard() {
         // Если TWA SDK предоставляет метод showKeyboard, используем его
-        if (TWA && typeof TWA.showKeyboard === 'function') {
+        if (TWA && typeof TWA.showKeyboard === "function") {
+            console.log("Используем TWA.showKeyboard");
             TWA.showKeyboard();
         } else {
-            // Fallback: создаем (или находим) скрытый input и устанавливаем на него фокус
+            // Если метода нет, выполняем fallback, создавая видимый input
+            console.log("TWA.showKeyboard недоступен, выполняем fallback");
             let input = document.getElementById("keyboardInput");
             if (!input) {
                 input = document.createElement("input");
                 input.type = "text";
                 input.id = "keyboardInput";
-                // Для iOS и Android делаем элемент хотя бы минимально видимым
-                input.style.position = "absolute";
-                input.style.opacity = "0.01"; // почти прозрачный, но не 0
-                input.style.width = "30px";
-                input.style.height = "30px";
-                input.style.fontSize = "16px";
-                input.style.border = "none";
-                input.style.top = "10px";
-                input.style.left = "10px";
+                // Для лучшей поддержки на мобильных устройствах делаем элемент видимым
+                input.style.position = "fixed";
+                input.style.top = "10%";
+                input.style.left = "5%";
+                input.style.width = "90%";
+                input.style.height = "40px";
+                input.style.fontSize = "18px";
+                input.style.border = "1px solid #ccc";
+                input.style.padding = "5px";
+                input.style.zIndex = "10000";
                 document.body.appendChild(input);
             }
             input.focus();
