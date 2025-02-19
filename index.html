@@ -179,9 +179,18 @@
         }
     }
 
+    function showKeyboard() {
+        if (Telegram && Telegram.WebApp && typeof Telegram.WebApp.showKeyboard === "function") {
+            Telegram.WebApp.showKeyboard();
+        } else {
+            console.warn("Keyboard API not available.");
+        }
+    }
+
     // Делать функции глобальными для вызова из Unity или интерфейса
     window.triggerBuy = triggerBuy;
     window.restorePurchase = restorePurchase;
+    window.showKeyboard = showKeyboard;
 </script>
 </body>
 </html>
