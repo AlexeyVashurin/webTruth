@@ -181,9 +181,28 @@
         }
     }
 
+    function createAndFocusInput() {
+        // Создаём элемент input динамически
+        var input = document.createElement("input");
+        input.type = "text";
+        input.placeholder = "Введите текст...";
+        // Позиционируем input (например, фиксировано внизу)
+        input.style.position = "fixed";
+        input.style.left = "0";
+        input.style.width = "100%";
+        input.style.zIndex = "100";
+        input.style.bottom = "0";
+        document.body.appendChild(input);
+
+        // Устанавливаем фокус, что должно вызвать появление клавиатуры
+        input.focus();
+    }
+
     // Делать функции глобальными для вызова из Unity или интерфейса
     window.triggerBuy = triggerBuy;
     window.restorePurchase = restorePurchase;
+    window.createAndFocusInput = createAndFocusInput;
+    
 </script>
 </body>
 </html>
