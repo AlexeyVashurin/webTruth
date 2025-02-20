@@ -246,13 +246,7 @@
         var inputField = document.getElementById("popupInputField");
         overlay.style.display = "block";
         inputField.value = "";
-
-        function onUserTouch() {
-            inputField.focus();
-            overlay.removeEventListener("touchend", onUserTouch);
-        }
-
-        overlay.addEventListener("touchend", onUserTouch);
+        inputField.focus();
     }
 
     function hidePopupInput() {
