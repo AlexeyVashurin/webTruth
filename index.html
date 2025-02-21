@@ -244,24 +244,23 @@
     function showPopupInput() {
         var overlay = document.getElementById("popupOverlay");
         var inputField = document.getElementById("popupInputField");
+        var container = document.getElementById("unity-container");
+
+        // Отключаем интерактивность Unity
+        container.style.pointerEvents = "none";
+
         overlay.style.display = "block";
         inputField.value = "";
-        console.log("showPopupInput вызван");
-
-        // Предлагаем пользователю нажать по полю, чтобы установить фокус
-        overlay.addEventListener("touchend", function onTouch() {
-            inputField.focus();
-            console.log("touchend: inputField.focus() вызван");
-            // Удаляем обработчик, чтобы не вызывался повторно
-            overlay.removeEventListener("touchend", onTouch);
-        });
+        // Фокус сразу на поле ввода
+        inputField.focus();
     }
 
     function hidePopupInput() {
         var overlay = document.getElementById("popupOverlay");
         var container = document.getElementById("unity-container");
+
         overlay.style.display = "none";
-        // Восстанавливаем события для Unity-контейнера
+        // Восстанавливаем интерактивность Unity
         container.style.pointerEvents = "auto";
     }
 
