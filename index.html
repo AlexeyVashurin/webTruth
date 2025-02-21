@@ -17,7 +17,7 @@
             width: 100%;
             height: 100%;
             background-color: rgba(0, 0, 0, 0.30);
-            z-index: 300;
+            z-index: 9999; /* Повышаем z-index, чтобы быть наверху */
         }
         /* Стили для контейнера pop-up окна */
         #popupContainer {
@@ -95,7 +95,6 @@
         function updateBannerVisibility() {
             warningBanner.style.display = warningBanner.children.length ? 'block' : 'none';
         }
-
         var div = document.createElement('div');
         div.innerHTML = msg;
         warningBanner.appendChild(div);
@@ -146,7 +145,7 @@
             progressBarFull.style.width = 100 * progress + "%";
         }).then((unityInstance) => {
             loadingBar.style.display = "none";
-            window.UnityInstance = unityInstance; // делаем UnityInstance глобальной
+            window.UnityInstance = unityInstance;
             console.log("UnityInstance создан:", window.UnityInstance);
         }).catch((message) => {
             alert(message);
@@ -169,10 +168,8 @@
         }
     }
 
-    // Инициализация SDK
     TWA.ready();
 
-    // Функция для запуска процесса покупки
     async function triggerBuy() {
         console.log("Вызов triggerBuy()");
         try {
@@ -212,11 +209,9 @@
         }
     }
 
-    // Функция для восстановления покупки через запрос к серверу
     async function restorePurchase() {
         console.log("Restore purchase");
         try {
-            // Предположим, что userId получен из Telegram WebApp:
             const userId = Telegram.WebApp.initDataUnsafe.user.id;
             const url = `https://sucisique.beget.app/restore?userId=${encodeURIComponent(userId)}`;
             const response = await fetch(url, {
@@ -246,36 +241,45 @@
         var inputField = document.getElementById("popupInputField");
         var container = document.getElementById("unity-container");
 
-        // Отключаем интерактивность Unity
+        // Отключаем обработку pointer-событий для Unity
         container.style.pointerEvents = "none";
 
         overlay.style.display = "block";
         inputField.value = "";
-        inputField.focus();
+        // С небольшой задержкой для надежного фокуса
+        setTimeout(() => {
+            inputField.focus();
+        }, 50);
     }
 
     function hidePopupInput() {
         var overlay = document.getElementById("popupOverlay");
         var container = document.getElementById("unity-container");
-
         overlay.style.display = "none";
-        // Восстанавливаем интерактивность Unity
         container.style.pointerEvents = "auto";
     }
 
-    // Предотвращаем всплытие событий клавиатуры с pop-up input,
-    // чтобы отдельное нажатие клавиш не попадало в Unity
+    // Предотвращаем всплытие событий клавиатуры от HTML-элементов, если поп-up открыт.
+    function suppressKeyEvents(e) {
+        var overlay = document.getElementById("popupOverlay");
+        if (overlay && overlay.style.display === "block") {
+            e.stopPropagation();
+            e.preventDefault();
+        }
+    }
+    document.addEventListener("keydown", suppressKeyEvents, true);
+    document.addEventListener("keypress", suppressKeyEvents, true);
+    document.addEventListener("keyup", suppressKeyEvents, true);
+
+    // Дополнительно предотвращаем всплытие для самого input
     var inputField = document.getElementById("popupInputField");
     inputField.addEventListener("keydown", function(e) {
         e.stopPropagation();
     });
 
-    // Обработка нажатия кнопки OK в pop-up вводе
     document.getElementById("popupSubmit").addEventListener("click", function(){
         var text = document.getElementById("popupInputField").value;
         hidePopupInput();
-        // Передаем текст обратно в Unity.
-        // Убедитесь, что в Unity существует GameObject "InputReceiver" с методом "OnPopupInput"
         if (typeof UnityInstance !== "undefined") {
             UnityInstance.SendMessage("InputReceiver", "OnPopupInput", text);
         } else {
@@ -283,7 +287,6 @@
         }
     });
 
-    // Делаем функции глобальными для вызова из Unity или интерфейса
     window.triggerBuy = triggerBuy;
     window.restorePurchase = restorePurchase;
     window.showPopupInput = showPopupInput;
