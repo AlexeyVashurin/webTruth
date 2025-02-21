@@ -6,7 +6,7 @@
     <title>Unity WebGL Player | Truth or Dare</title>
     <link rel="shortcut icon" href="TemplateData/favicon.ico">
     <link rel="stylesheet" href="TemplateData/style.css">
-    <!-- Дополнительные стили для pop-up ввода в стиле Дитера Рамса -->
+    <!-- Дополнительные стили для pop-up ввода -->
     <style>
         /* Стили для pop-up оверлея */
         #popupOverlay {
@@ -16,7 +16,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.30); /* легкая прозрачность */
+            background-color: rgba(0, 0, 0, 0.30);
             z-index: 300;
         }
         /* Стили для контейнера pop-up окна */
@@ -50,15 +50,15 @@
             width: 100%;
             padding: 12px;
             font-size: 16px;
-            background: #fff;       /* белый фон */
-            color: #000;            /* черный текст */
+            background: #fff;
+            color: #000;
             border: none;
             border-radius: 2px;
             cursor: pointer;
             transition: background 0.3s;
         }
         #popupSubmit:hover {
-            background: #f0f0f0;    /* чуть более светлый оттенок при наведении */
+            background: #f0f0f0;
         }
     </style>
 </head>
@@ -251,7 +251,6 @@
 
         overlay.style.display = "block";
         inputField.value = "";
-        // Фокус сразу на поле ввода
         inputField.focus();
     }
 
@@ -263,6 +262,13 @@
         // Восстанавливаем интерактивность Unity
         container.style.pointerEvents = "auto";
     }
+
+    // Предотвращаем всплытие событий клавиатуры с pop-up input,
+    // чтобы отдельное нажатие клавиш не попадало в Unity
+    var inputField = document.getElementById("popupInputField");
+    inputField.addEventListener("keydown", function(e) {
+        e.stopPropagation();
+    });
 
     // Обработка нажатия кнопки OK в pop-up вводе
     document.getElementById("popupSubmit").addEventListener("click", function(){
