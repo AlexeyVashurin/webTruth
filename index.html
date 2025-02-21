@@ -244,20 +244,34 @@
     function showPopupInput() {
         var overlay = document.getElementById("popupOverlay");
         var inputField = document.getElementById("popupInputField");
+        var container = document.getElementById("unity-container");
+
+        // Убедимся, что overlay наверху
+        overlay.style.zIndex = "1000";
+        // Unity-контейнер ниже overlay
+        container.style.zIndex = "1";
+        // Отключаем события для Unity-контейнера, чтобы ввод не уходил туда
+        container.style.pointerEvents = "none";
+
         overlay.style.display = "block";
         inputField.value = "";
-        // Снимаем фокус с любого активного элемента (например, Unity‑InputField)
+
+        // Снимаем фокус с активного элемента
         if(document.activeElement) {
             document.activeElement.blur();
         }
-        // Задержка в 0 мс поможет убедиться, что blur произошёл
+        // Небольшая задержка для корректного перехода фокуса
         setTimeout(function(){
             inputField.focus();
-        }, 0);
+        }, 100);
     }
 
     function hidePopupInput() {
-        document.getElementById("popupOverlay").style.display = "none";
+        var overlay = document.getElementById("popupOverlay");
+        var container = document.getElementById("unity-container");
+        overlay.style.display = "none";
+        // Восстанавливаем события для Unity-контейнера
+        container.style.pointerEvents = "auto";
     }
 
     // Обработка нажатия кнопки OK в pop-up вводе
