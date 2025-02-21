@@ -17,7 +17,7 @@
             width: 100%;
             height: 100%;
             background-color: rgba(0, 0, 0, 0.30);
-            z-index: 9999; /* Повышаем z-index, чтобы быть наверху */
+            z-index: 9999; /* гарантируем, что окно поверх Unity */
         }
         /* Стили для контейнера pop-up окна */
         #popupContainer {
@@ -158,7 +158,6 @@
 <script type="module">
     import TWA from "https://cdn.skypack.dev/@twa-dev/sdk";
 
-    // Функция-обертка для безопасного показа сообщений
     function safeShowAlert(message) {
         try {
             TWA.showAlert(message);
@@ -241,12 +240,12 @@
         var inputField = document.getElementById("popupInputField");
         var container = document.getElementById("unity-container");
 
-        // Отключаем обработку pointer-событий для Unity
+        // Отключаем pointer-события для Unity
         container.style.pointerEvents = "none";
 
         overlay.style.display = "block";
         inputField.value = "";
-        // С небольшой задержкой для надежного фокуса
+        // Небольшая задержка для установки фокуса
         setTimeout(() => {
             inputField.focus();
         }, 50);
@@ -259,10 +258,12 @@
         container.style.pointerEvents = "auto";
     }
 
-    // Предотвращаем всплытие событий клавиатуры от HTML-элементов, если поп-up открыт.
+    // Функция, которая подавляет события клавиатуры, если поп-up открыт, но разрешает их для самого input
     function suppressKeyEvents(e) {
         var overlay = document.getElementById("popupOverlay");
-        if (overlay && overlay.style.display === "block") {
+        var inputField = document.getElementById("popupInputField");
+        // Если поп-up открыт и событие не исходит из поля ввода, подавляем его
+        if (overlay && overlay.style.display === "block" && !inputField.contains(e.target)) {
             e.stopPropagation();
             e.preventDefault();
         }
@@ -271,7 +272,7 @@
     document.addEventListener("keypress", suppressKeyEvents, true);
     document.addEventListener("keyup", suppressKeyEvents, true);
 
-    // Дополнительно предотвращаем всплытие для самого input
+    // Дополнительно для самого input — прекращаем всплытие keydown
     var inputField = document.getElementById("popupInputField");
     inputField.addEventListener("keydown", function(e) {
         e.stopPropagation();
