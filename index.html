@@ -246,7 +246,14 @@
         var inputField = document.getElementById("popupInputField");
         overlay.style.display = "block";
         inputField.value = "";
-        // inputField.focus();
+        // Снимаем фокус с любого активного элемента (например, Unity‑InputField)
+        if(document.activeElement) {
+            document.activeElement.blur();
+        }
+        // Задержка в 0 мс поможет убедиться, что blur произошёл
+        setTimeout(function(){
+            inputField.focus();
+        }, 0);
     }
 
     function hidePopupInput() {
