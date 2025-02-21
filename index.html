@@ -246,32 +246,28 @@
         var inputField = document.getElementById("popupInputField");
         var container = document.getElementById("unity-container");
 
-        // Убедимся, что overlay наверху
-        overlay.style.zIndex = "1000";
-        // Unity-контейнер ниже overlay
-        container.style.zIndex = "1";
-        // Отключаем события для Unity-контейнера, чтобы ввод не уходил туда
-        container.style.pointerEvents = "none";
+        // Скрываем Unity-контейнер, чтобы он не перехватывал события клавиатуры
+        container.style.display = "none";
 
         overlay.style.display = "block";
         inputField.value = "";
 
         // Снимаем фокус с активного элемента
-        if(document.activeElement) {
+        if (document.activeElement) {
             document.activeElement.blur();
         }
-        // Небольшая задержка для корректного перехода фокуса
-        setTimeout(function(){
+        // Делаем задержку, чтобы гарантировать корректное переключение фокуса
+        setTimeout(function() {
             inputField.focus();
-        }, 100);
+        }, 300);
     }
 
     function hidePopupInput() {
         var overlay = document.getElementById("popupOverlay");
         var container = document.getElementById("unity-container");
         overlay.style.display = "none";
-        // Восстанавливаем события для Unity-контейнера
-        container.style.pointerEvents = "auto";
+        // Восстанавливаем отображение Unity-контейнера
+        container.style.display = "block";
     }
 
     // Обработка нажатия кнопки OK в pop-up вводе
