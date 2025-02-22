@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en-us">
+<html lang="ru">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="TemplateData/style.css">
     <!-- Дополнительные стили для pop-up ввода -->
     <style>
-        /* Стили для pop-up оверлея */
+        /* Стили для pop-up оверлея с использованием flex для центрирования */
         #popupOverlay {
             display: none;
             position: fixed;
@@ -18,13 +18,13 @@
             height: 100%;
             background-color: rgba(0, 0, 0, 0.30);
             z-index: 9999;
+            /* Центрирование через flex */
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
-        /* Стили для контейнера pop-up окна */
+        /* Стили для контейнера pop-up окна без transform */
         #popupContainer {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
             background: #ffffff;
             border: 1px solid #ccc;
             border-radius: 4px;
@@ -44,7 +44,7 @@
             border: 1px solid #ccc;
             border-radius: 2px;
             box-sizing: border-box;
-            /* Явно разрешаем выделение и показы каретку */
+            /* Обеспечиваем корректное отображение каретки */
             -webkit-user-select: text;
             user-select: text;
             caret-color: auto;
@@ -251,7 +251,7 @@
         // Отключаем pointer-события для Unity
         container.style.pointerEvents = "none";
 
-        overlay.style.display = "block";
+        overlay.style.display = "flex";
         inputField.value = "";
         // С небольшой задержкой устанавливаем фокус на input
         setTimeout(() => {
@@ -266,7 +266,7 @@
         container.style.pointerEvents = "auto";
     }
 
-    // Отладочный лог для проверки событий ввода
+    // Отладка: логирование события ввода
     var inputField = document.getElementById("popupInputField");
     inputField.addEventListener("input", function(e) {
         console.log("Событие input:", e.target.value);
