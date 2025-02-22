@@ -15,7 +15,6 @@
             height: 100%;
             left: 0;
             top: 0;
-            transition: opacity 0.3s ease;
         }
         /* Pop-up оверлей для ввода */
         #popupOverlay {
@@ -75,7 +74,7 @@
     <!-- Отключаем перехват клавиатуры Unity -->
     <script>
         var Module = {
-            keyboardCapture: [] // или можно попробовать false, но пустой массив в данном случае лучше
+            keyboardCapture: [] // или false; пустой массив часто помогает
         };
     </script>
 </head>
@@ -257,29 +256,27 @@
         var inputField = document.getElementById("popupInputField");
         var container = document.getElementById("unity-container");
 
+        // Снимаем фокус с текущего активного элемента, если это не наш input
         if (document.activeElement && document.activeElement !== inputField) {
             document.activeElement.blur();
             console.log("Сняли фокус с:", document.activeElement);
         }
-        // Вместо скрытия через display:none, делаем Unity невидимым
-        container.style.opacity = "0";
-        container.style.pointerEvents = "none";
-
+        // Скрываем Unity полностью на время ввода
+        container.style.display = "none";
         overlay.style.display = "flex";
         inputField.value = "";
-        requestAnimationFrame(() => {
+        setTimeout(() => {
             inputField.focus();
             console.log("Фокус установлен. document.activeElement:", document.activeElement);
-        });
+        }, 50);
     }
 
     function hidePopupInput() {
         var overlay = document.getElementById("popupOverlay");
         var container = document.getElementById("unity-container");
         overlay.style.display = "none";
-        // Возвращаем Unity обратно (делаем видимым и активным)
-        container.style.opacity = "1";
-        container.style.pointerEvents = "auto";
+        // Возвращаем Unity обратно
+        container.style.display = "block";
     }
 
     var inputField = document.getElementById("popupInputField");
