@@ -15,6 +15,7 @@
             height: 100%;
             left: 0;
             top: 0;
+            transition: opacity 0.3s ease;
         }
         /* Pop-up оверлей для ввода */
         #popupOverlay {
@@ -71,10 +72,10 @@
         }
     </style>
 
-    <!-- Отключаем перехват клавиатуры Unity (но на iOS это не помогает полностью) -->
+    <!-- Отключаем перехват клавиатуры Unity -->
     <script>
         var Module = {
-            keyboardCapture: [] // или false
+            keyboardCapture: [] // или можно попробовать false, но пустой массив в данном случае лучше
         };
     </script>
 </head>
@@ -100,7 +101,7 @@
 </div>
 
 <script>
-    // --- Unity инициализация (стандартный код) ---
+    // Unity инициализация (стандартный код)
     var container = document.querySelector("#unity-container");
     var canvas = document.querySelector("#unity-canvas");
     var loadingBar = document.querySelector("#unity-loading-bar");
@@ -168,9 +169,10 @@
         });
     };
     document.body.appendChild(script);
+</script>
 
-    // --- Скрипт для работы с TWA SDK и pop-up ввода ---
-    // (оставляем без изменений)
+<!-- Скрипт для работы с Telegram TWA SDK и pop-up вводом -->
+<script type="module">
     import TWA from "https://cdn.skypack.dev/@twa-dev/sdk";
 
     function safeShowAlert(message) {
@@ -255,13 +257,14 @@
         var inputField = document.getElementById("popupInputField");
         var container = document.getElementById("unity-container");
 
-        // Снимаем фокус с текущего активного элемента (если он не наш input)
         if (document.activeElement && document.activeElement !== inputField) {
             document.activeElement.blur();
             console.log("Сняли фокус с:", document.activeElement);
         }
-        // Ключевой момент: временно скрываем Unity, чтобы он не перехватывал ввод
-        container.style.display = "none";
+        // Вместо скрытия через display:none, делаем Unity невидимым
+        container.style.opacity = "0";
+        container.style.pointerEvents = "none";
+
         overlay.style.display = "flex";
         inputField.value = "";
         requestAnimationFrame(() => {
@@ -274,37 +277,5 @@
         var overlay = document.getElementById("popupOverlay");
         var container = document.getElementById("unity-container");
         overlay.style.display = "none";
-        // Возвращаем Unity обратно
-        container.style.display = "block";
-    }
-
-    var inputField = document.getElementById("popupInputField");
-    inputField.addEventListener("focus", function() {
-        console.log("Input получил фокус.");
-    });
-    inputField.addEventListener("blur", function() {
-        console.log("Input потерял фокус.");
-    });
-    inputField.addEventListener("input", function(e) {
-        console.log("Событие input:", e.target.value);
-    });
-
-    document.getElementById("popupSubmit").addEventListener("click", function(){
-        var text = inputField.value;
-        hidePopupInput();
-        if (typeof UnityInstance !== "undefined") {
-            UnityInstance.SendMessage("InputReceiver", "OnPopupInput", text);
-        } else {
-            console.warn("UnityInstance is undefined");
-        }
-    });
-
-    window.triggerBuy = triggerBuy;
-    window.restorePurchase = restorePurchase;
-    window.showPopupInput = showPopupInput;
-</script>
-
-<!-- Подключение Unity загрузчика -->
-<script src="Build/webTruth.loader.js"></script>
-</body>
-</html>
+        // Возвращаем Unity обратно (делаем видимым и активным)
+        contai
