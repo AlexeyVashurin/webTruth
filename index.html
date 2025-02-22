@@ -70,11 +70,11 @@
             background: #f0f0f0;
         }
     </style>
-    <!-- Отключаем перехват клавиатуры Unity.
-         Обратите внимание: иногда помогает задать пустой массив, а не false -->
+
+    <!-- Отключаем перехват клавиатуры Unity -->
     <script>
         var Module = {
-            keyboardCapture: [] // или попробуйте false, если [] не сработает
+            keyboardCapture: [] // можно попробовать и false, но в данном случае пустой массив
         };
     </script>
 </head>
@@ -100,7 +100,7 @@
 </div>
 
 <script>
-    // Стандартная инициализация Unity
+    // Unity инициализация (стандартный код)
     var container = document.querySelector("#unity-container");
     var canvas = document.querySelector("#unity-canvas");
     var loadingBar = document.querySelector("#unity-loading-bar");
@@ -163,17 +163,6 @@
             loadingBar.style.display = "none";
             window.UnityInstance = unityInstance;
             console.log("UnityInstance создан:", window.UnityInstance);
-
-            // Попытка удалить скрытый Unity input (если он создан)
-            setTimeout(function() {
-                var hiddenInputs = document.querySelectorAll("input[style*='position: absolute'][aria-hidden='true']");
-                if(hiddenInputs.length) {
-                    hiddenInputs.forEach(function(input) {
-                        input.parentNode.removeChild(input);
-                    });
-                    console.log("Удалены скрытые input Unity.");
-                }
-            }, 1000);
         }).catch((message) => {
             alert(message);
         });
@@ -262,6 +251,25 @@
     }
 
     // Функции для pop-up ввода
+    let observer;
+    function startRemovingUnityHiddenInputs() {
+        // Запускаем MutationObserver для удаления скрытых input-элементов Unity
+        observer = new MutationObserver((mutationsList) => {
+            mutationsList.forEach((mutation) => {
+                mutation.addedNodes.forEach((node) => {
+                    if (node.tagName === 'INPUT' && node.getAttribute('aria-hidden') === 'true') {
+                        node.parentNode && node.parentNode.removeChild(node);
+                        console.log("Удален скрытый input от Unity.");
+                    }
+                });
+            });
+        });
+        observer.observe(document.body, { childList: true, subtree: true });
+    }
+    function stopRemovingUnityHiddenInputs() {
+        if (observer) observer.disconnect();
+    }
+
     function showPopupInput() {
         var overlay = document.getElementById("popupOverlay");
         var inputField = document.getElementById("popupInputField");
@@ -271,10 +279,11 @@
             document.activeElement.blur();
             console.log("Сняли фокус с:", document.activeElement);
         }
-
         container.style.pointerEvents = "none";
         overlay.style.display = "flex";
         inputField.value = "";
+        // Запускаем наблюдатель, чтобы удалить скрытые input Unity
+        startRemovingUnityHiddenInputs();
         requestAnimationFrame(() => {
             inputField.focus();
             console.log("Фокус установлен. document.activeElement:", document.activeElement);
@@ -286,6 +295,7 @@
         var container = document.getElementById("unity-container");
         overlay.style.display = "none";
         container.style.pointerEvents = "auto";
+        stopRemovingUnityHiddenInputs();
     }
 
     var inputField = document.getElementById("popupInputField");
