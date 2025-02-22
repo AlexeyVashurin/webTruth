@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="TemplateData/style.css">
     <!-- Дополнительные стили для pop-up ввода -->
     <style>
-        /* Стили для pop-up оверлея с использованием flex для центрирования */
+        /* Поп-ап оверлей центрируется через flex, без использования transform */
         #popupOverlay {
             display: none;
             position: fixed;
@@ -18,12 +18,11 @@
             height: 100%;
             background-color: rgba(0, 0, 0, 0.30);
             z-index: 9999;
-            /* Центрирование через flex */
             display: flex;
             justify-content: center;
             align-items: center;
         }
-        /* Стили для контейнера pop-up окна без transform */
+        /* Контейнер pop-up без transform */
         #popupContainer {
             background: #ffffff;
             border: 1px solid #ccc;
@@ -35,7 +34,7 @@
             font-family: 'Helvetica Neue', Arial, sans-serif;
             text-align: center;
         }
-        /* Стили для поля ввода внутри pop-up */
+        /* Поле ввода с явными настройками для iOS */
         #popupInputField {
             width: 100%;
             padding: 12px;
@@ -44,12 +43,11 @@
             border: 1px solid #ccc;
             border-radius: 2px;
             box-sizing: border-box;
-            /* Обеспечиваем корректное отображение каретки */
             -webkit-user-select: text;
             user-select: text;
             caret-color: auto;
         }
-        /* Стили для кнопки подтверждения */
+        /* Кнопка подтверждения */
         #popupSubmit {
             width: 100%;
             padding: 12px;
@@ -88,7 +86,7 @@
 </div>
 
 <script>
-    // Unity инициализация (стандартный код)
+    // Стандартная инициализация Unity
     var container = document.querySelector("#unity-container");
     var canvas = document.querySelector("#unity-canvas");
     var loadingBar = document.querySelector("#unity-loading-bar");
@@ -244,19 +242,24 @@
         var inputField = document.getElementById("popupInputField");
         var container = document.getElementById("unity-container");
 
-        // Снимаем фокус с Unity (если он есть)
-        if (document.activeElement !== inputField) {
+        // Если фокус находится не на input, снимаем его с текущего элемента
+        if (document.activeElement && document.activeElement !== inputField) {
             document.activeElement.blur();
+            console.log("Сняли фокус с:", document.activeElement);
         }
+
         // Отключаем pointer-события для Unity
         container.style.pointerEvents = "none";
 
+        // Отображаем pop-up через flex
         overlay.style.display = "flex";
         inputField.value = "";
-        // С небольшой задержкой устанавливаем фокус на input
-        setTimeout(() => {
+
+        // Используем requestAnimationFrame для установки фокуса после рендеринга
+        requestAnimationFrame(() => {
             inputField.focus();
-        }, 50);
+            console.log("Фокус установлен. document.activeElement:", document.activeElement);
+        });
     }
 
     function hidePopupInput() {
@@ -266,14 +269,20 @@
         container.style.pointerEvents = "auto";
     }
 
-    // Отладка: логирование события ввода
+    // Отладочные обработчики для отслеживания событий input
     var inputField = document.getElementById("popupInputField");
+    inputField.addEventListener("focus", function() {
+        console.log("Input получил фокус.");
+    });
+    inputField.addEventListener("blur", function() {
+        console.log("Input потерял фокус.");
+    });
     inputField.addEventListener("input", function(e) {
         console.log("Событие input:", e.target.value);
     });
 
     document.getElementById("popupSubmit").addEventListener("click", function(){
-        var text = document.getElementById("popupInputField").value;
+        var text = inputField.value;
         hidePopupInput();
         if (typeof UnityInstance !== "undefined") {
             UnityInstance.SendMessage("InputReceiver", "OnPopupInput", text);
