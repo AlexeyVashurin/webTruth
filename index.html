@@ -71,10 +71,10 @@
         }
     </style>
 
-    <!-- Отключаем перехват клавиатуры Unity -->
+    <!-- Отключаем перехват клавиатуры Unity (но на iOS это не помогает полностью) -->
     <script>
         var Module = {
-            keyboardCapture: [] // можно попробовать и false, но в данном случае пустой массив
+            keyboardCapture: [] // или false
         };
     </script>
 </head>
@@ -100,7 +100,7 @@
 </div>
 
 <script>
-    // Unity инициализация (стандартный код)
+    // --- Unity инициализация (стандартный код) ---
     var container = document.querySelector("#unity-container");
     var canvas = document.querySelector("#unity-canvas");
     var loadingBar = document.querySelector("#unity-loading-bar");
@@ -168,10 +168,9 @@
         });
     };
     document.body.appendChild(script);
-</script>
 
-<!-- Скрипт для работы с Telegram TWA SDK и pop-up вводом -->
-<script type="module">
+    // --- Скрипт для работы с TWA SDK и pop-up ввода ---
+    // (оставляем без изменений)
     import TWA from "https://cdn.skypack.dev/@twa-dev/sdk";
 
     function safeShowAlert(message) {
@@ -250,40 +249,21 @@
         }
     }
 
-    // Функции для pop-up ввода
-    let observer;
-    function startRemovingUnityHiddenInputs() {
-        // Запускаем MutationObserver для удаления скрытых input-элементов Unity
-        observer = new MutationObserver((mutationsList) => {
-            mutationsList.forEach((mutation) => {
-                mutation.addedNodes.forEach((node) => {
-                    if (node.tagName === 'INPUT' && node.getAttribute('aria-hidden') === 'true') {
-                        node.parentNode && node.parentNode.removeChild(node);
-                        console.log("Удален скрытый input от Unity.");
-                    }
-                });
-            });
-        });
-        observer.observe(document.body, { childList: true, subtree: true });
-    }
-    function stopRemovingUnityHiddenInputs() {
-        if (observer) observer.disconnect();
-    }
-
+    // --- Функции для pop-up ввода ---
     function showPopupInput() {
         var overlay = document.getElementById("popupOverlay");
         var inputField = document.getElementById("popupInputField");
         var container = document.getElementById("unity-container");
 
+        // Снимаем фокус с текущего активного элемента (если он не наш input)
         if (document.activeElement && document.activeElement !== inputField) {
             document.activeElement.blur();
             console.log("Сняли фокус с:", document.activeElement);
         }
-        container.style.pointerEvents = "none";
+        // Ключевой момент: временно скрываем Unity, чтобы он не перехватывал ввод
+        container.style.display = "none";
         overlay.style.display = "flex";
         inputField.value = "";
-        // Запускаем наблюдатель, чтобы удалить скрытые input Unity
-        startRemovingUnityHiddenInputs();
         requestAnimationFrame(() => {
             inputField.focus();
             console.log("Фокус установлен. document.activeElement:", document.activeElement);
@@ -294,8 +274,8 @@
         var overlay = document.getElementById("popupOverlay");
         var container = document.getElementById("unity-container");
         overlay.style.display = "none";
-        container.style.pointerEvents = "auto";
-        stopRemovingUnityHiddenInputs();
+        // Возвращаем Unity обратно
+        container.style.display = "block";
     }
 
     var inputField = document.getElementById("popupInputField");
