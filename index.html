@@ -44,6 +44,10 @@
             border: 1px solid #ccc;
             border-radius: 2px;
             box-sizing: border-box;
+            /* Явно разрешаем выделение и показы каретку */
+            -webkit-user-select: text;
+            user-select: text;
+            caret-color: auto;
         }
         /* Стили для кнопки подтверждения */
         #popupSubmit {
@@ -78,7 +82,7 @@
 <!-- Pop-up оверлей для ввода -->
 <div id="popupOverlay">
     <div id="popupContainer">
-        <input type="text" id="popupInputField" placeholder="Введите текст..." />
+        <input type="text" id="popupInputField" placeholder="Введите текст..." autocomplete="off" autocorrect="off" />
         <button id="popupSubmit">OK</button>
     </div>
 </div>
@@ -158,7 +162,6 @@
 <script type="module">
     import TWA from "https://cdn.skypack.dev/@twa-dev/sdk";
 
-    // Функция-обертка для безопасного показа сообщений
     function safeShowAlert(message) {
         try {
             TWA.showAlert(message);
@@ -241,14 +244,16 @@
         var inputField = document.getElementById("popupInputField");
         var container = document.getElementById("unity-container");
 
-        // Убираем фокус с Unity‑canvas (если он был)
-        canvas.blur();
+        // Снимаем фокус с Unity (если он есть)
+        if (document.activeElement !== inputField) {
+            document.activeElement.blur();
+        }
         // Отключаем pointer-события для Unity
         container.style.pointerEvents = "none";
 
         overlay.style.display = "block";
         inputField.value = "";
-        // С небольшой задержкой для гарантированного фокуса
+        // С небольшой задержкой устанавливаем фокус на input
         setTimeout(() => {
             inputField.focus();
         }, 50);
@@ -261,10 +266,11 @@
         container.style.pointerEvents = "auto";
     }
 
-    // Глобальные обработчики клавиатурных событий мы не вешаем на document.
-    // Если Unity больше не перехватывает ввод, то оставляем стандартное поведение input.
-    // Если потребуется блокировать какие-либо события вне input, можно добавить обработчик на overlay,
-    // но он не должен мешать самому input получать символы.
+    // Отладочный лог для проверки событий ввода
+    var inputField = document.getElementById("popupInputField");
+    inputField.addEventListener("input", function(e) {
+        console.log("Событие input:", e.target.value);
+    });
 
     document.getElementById("popupSubmit").addEventListener("click", function(){
         var text = document.getElementById("popupInputField").value;
