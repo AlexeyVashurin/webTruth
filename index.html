@@ -16,7 +16,7 @@
             left: 0;
             top: 0;
         }
-        /* Поп-up оверлей для ввода */
+        /* Pop-up оверлей для ввода */
         #popupOverlay {
             display: none;
             position: fixed;
@@ -70,11 +70,11 @@
             background: #f0f0f0;
         }
     </style>
-
-    <!-- Отключаем перехват клавиатуры Unity -->
+    <!-- Отключаем перехват клавиатуры Unity.
+         Обратите внимание: иногда помогает задать пустой массив, а не false -->
     <script>
         var Module = {
-            keyboardCapture: false
+            keyboardCapture: [] // или попробуйте false, если [] не сработает
         };
     </script>
 </head>
@@ -100,7 +100,7 @@
 </div>
 
 <script>
-    // Unity инициализация (стандартный код)
+    // Стандартная инициализация Unity
     var container = document.querySelector("#unity-container");
     var canvas = document.querySelector("#unity-canvas");
     var loadingBar = document.querySelector("#unity-loading-bar");
@@ -163,6 +163,17 @@
             loadingBar.style.display = "none";
             window.UnityInstance = unityInstance;
             console.log("UnityInstance создан:", window.UnityInstance);
+
+            // Попытка удалить скрытый Unity input (если он создан)
+            setTimeout(function() {
+                var hiddenInputs = document.querySelectorAll("input[style*='position: absolute'][aria-hidden='true']");
+                if(hiddenInputs.length) {
+                    hiddenInputs.forEach(function(input) {
+                        input.parentNode.removeChild(input);
+                    });
+                    console.log("Удалены скрытые input Unity.");
+                }
+            }, 1000);
         }).catch((message) => {
             alert(message);
         });
