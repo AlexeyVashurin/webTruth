@@ -278,4 +278,37 @@
         var container = document.getElementById("unity-container");
         overlay.style.display = "none";
         // Возвращаем Unity обратно (делаем видимым и активным)
-        contai
+        container.style.opacity = "1";
+        container.style.pointerEvents = "auto";
+    }
+
+    var inputField = document.getElementById("popupInputField");
+    inputField.addEventListener("focus", function() {
+        console.log("Input получил фокус.");
+    });
+    inputField.addEventListener("blur", function() {
+        console.log("Input потерял фокус.");
+    });
+    inputField.addEventListener("input", function(e) {
+        console.log("Событие input:", e.target.value);
+    });
+
+    document.getElementById("popupSubmit").addEventListener("click", function(){
+        var text = inputField.value;
+        hidePopupInput();
+        if (typeof UnityInstance !== "undefined") {
+            UnityInstance.SendMessage("InputReceiver", "OnPopupInput", text);
+        } else {
+            console.warn("UnityInstance is undefined");
+        }
+    });
+
+    window.triggerBuy = triggerBuy;
+    window.restorePurchase = restorePurchase;
+    window.showPopupInput = showPopupInput;
+</script>
+
+<!-- Подключение Unity загрузчика -->
+<script src="Build/webTruth.loader.js"></script>
+</body>
+</html>
