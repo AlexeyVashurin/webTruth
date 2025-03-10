@@ -136,6 +136,8 @@
                         }
                     } else {
                         safeShowAlert("Payment not completed. Status: " + status);
+                        UnityInstance.SendMessage("PaymentManager", "Cancel", "Покупка успешно завершена");
+                        
                     }
                 });
             } else {
