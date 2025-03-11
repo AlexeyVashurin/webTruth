@@ -135,9 +135,8 @@
                             console.warn("UnityInstance is not defined.");
                         }
                     } else {
+                        UnityInstance.SendMessage("PaymentManager", "Cancel", "Покупка отменена");
                         safeShowAlert("Payment not completed. Status: " + status);
-                        UnityInstance.SendMessage("PaymentManager", "Cancel", "Покупка успешно завершена");
-                        
                     }
                 });
             } else {
